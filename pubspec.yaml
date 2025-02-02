@@ -50,6 +50,7 @@ dependencies:
   flutter_native_splash: ^2.4.3
   hijri: ^3.0.0
   flutter_inner_shadow: 0.0.1
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:

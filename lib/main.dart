@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:takyeem/features/auth/auth_gate.dart';
@@ -14,13 +15,14 @@ import 'package:takyeem/themes/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: ".env");
+
   const locale = 'ar';
   HijriCalendar.setLocal(locale);
 
   await Supabase.initialize(
-    url: "https://ntyqebpqnqfwuxjdcehb.supabase.co",
-    anonKey:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eXFlYnBxbnFmd3V4amRjZWhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI2Mjc1OTMsImV4cCI6MjA0ODIwMzU5M30.DCTEimaOgWGqFuBWyyowk2s0ic0cAklE_ly8HJu8Qks",
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   runApp(const MyApp());
