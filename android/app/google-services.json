@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1074986358711",
+    "project_id": "takyeem-f4fee",
+    "storage_bucket": "takyeem-f4fee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074986358711:android:13e7ac05a41902e3bc3a32",
+        "android_client_info": {
+          "package_name": "com.example.takyeem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVcTgK-_nCz90OrO_Kdxpxxs9g0Z0AspU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

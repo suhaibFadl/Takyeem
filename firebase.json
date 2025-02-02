@@ -1,0 +1,65 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "takyeem-f4fee",
+          "appId": "1:1074986358711:android:13e7ac05a41902e3bc3a32",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "takyeem-f4fee",
+          "configurations": {
+            "android": "1:1074986358711:android:13e7ac05a41902e3bc3a32",
+            "ios": "1:1074986358711:ios:f9bdd07a5ed744afbc3a32",
+            "macos": "1:1074986358711:ios:f9bdd07a5ed744afbc3a32",
+            "web": "1:1074986358711:web:eba1a9e82d7c34a3bc3a32",
+            "windows": "1:1074986358711:web:461c2412a139dd96bc3a32"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "apphosting": {
+      "port": 5002,
+      "rootDirectory": "firebase"
+    },
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "database": {
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "pubsub": {
+      "port": 8085
+    },
+    "storage": {
+      "port": 9199
+    },
+    "eventarc": {
+      "port": 9092
+    },
+    "dataconnect": {
+      "port": 9399
+    },
+    "tasks": {
+      "port": 9499
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
+}
