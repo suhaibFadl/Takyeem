@@ -1,12 +1,15 @@
 class DailyRecordType {
-  final int id;
+  final String uid;
   final String name;
 
-  DailyRecordType({required this.id, required this.name});
+  DailyRecordType({
+    required this.uid,
+    required this.name,
+  });
 
   factory DailyRecordType.fromJson(Map<String, dynamic> json) {
     return DailyRecordType(
-      id: json['id'],
+      uid: json['uid'],
       name: json['name'],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:takyeem/features/auth/pages/login.dart';
@@ -8,22 +9,15 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Supabase.instance.client.auth.onAuthStateChange,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          final session = snapshot.hasData ? snapshot.data!.session : null;
-          if (session != null) {
-            // return ProfilePage();
-            return const NavBar();
-          } else {
-            return const LoginPage();
-          }
-        });
+    return StreamBuilder<firebase_auth.User?>(
+      stream: firebase_auth.FirebaseAuth.instance.userChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return const LoginPage();
+        } else {
+          return const NavBar();
+        }
+      },
+    );
   }
 }

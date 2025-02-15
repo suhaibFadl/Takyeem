@@ -25,10 +25,14 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       emit(ReportLoadingState());
       try {
         dailyRecordStatus = await reportsService.loadDailyRecordStatus();
+        print("dailyRecordStatus: ${dailyRecordStatus}");
         dailyRecordType = await reportsService.loadDailyRecordType();
+        print("dailyRecordType: ${dailyRecordType.length}");
         studentswithOutRecords =
             await reportsService.loadStudentsWithoutDailyRecord();
+        print("studentswithOutRecords: ${studentswithOutRecords?.length}");
         sheikhs = await reportsService.loadSheikhs();
+        print("sheikhs: ${sheikhs.length}");
         emit(ReportLoadedState(
           dailyRecordStatus,
           dailyRecordType,

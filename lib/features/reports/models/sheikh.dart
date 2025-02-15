@@ -1,13 +1,16 @@
 class Sheikh {
-  final int id;
+  final String uid;
   final String name;
 
-  Sheikh({required this.id, required this.name});
+  Sheikh({
+    required this.uid,
+    required this.name,
+  });
 
   factory Sheikh.fromJson(Map<String, dynamic> json) {
     return Sheikh(
-      id: json['id'],
-      name: json['name'],
+      uid: json['uid'] ?? '',
+      name: json['name'] ?? '',
     );
   }
 }

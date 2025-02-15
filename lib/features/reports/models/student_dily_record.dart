@@ -1,16 +1,17 @@
 import 'package:takyeem/features/students/models/student.dart';
 
 class StudentDailyRecord {
-  late int? id;
+  late String? uid;
   late int studentId;
   late String type;
   late String status;
   late String sheikh;
   late String note;
   late DateTime date;
+
   late Student? student;
   StudentDailyRecord({
-    this.id,
+    this.uid,
     required this.studentId,
     required this.type,
     required this.status,
@@ -33,7 +34,7 @@ class StudentDailyRecord {
 
   factory StudentDailyRecord.fromJson(Map<String, dynamic> json) {
     return StudentDailyRecord(
-      id: json['id'],
+      uid: json['uid'],
       studentId: json['student_id'],
       type: json['type'],
       status: json['status'],

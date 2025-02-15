@@ -1,15 +1,19 @@
 class Surah {
-  final int id;
+  final String uid;
   final String name;
   final int order;
 
-  Surah(this.id, this.name, this.order);
+  Surah({
+    required this.uid,
+    required this.name,
+    required this.order,
+  });
 
   factory Surah.fromJson(Map<String, dynamic> json) {
     return Surah(
-      json['id'],
-      json['name'],
-      json['order'],
+      uid: json['uid'],
+      name: json['name'],
+      order: json['order'],
     );
   }
 }

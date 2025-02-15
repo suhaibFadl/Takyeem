@@ -11,7 +11,7 @@ class Student {
   final String phoneNumber;
   final String quardianPhoneNumber;
   final List<StudentDailyRecord>? studentDailyRecords;
-  final int surahId;
+  // final int surahId;
   final Surah surah;
   bool isActive = true;
 
@@ -25,10 +25,11 @@ class Student {
     required this.phoneNumber,
     required this.quardianPhoneNumber,
     required this.isActive,
-    required this.surahId,
+    // required this.surahId,
     required this.surah,
     this.studentDailyRecords,
   });
+
   Map<String, dynamic> toJson() {
     return {
       'first_name': firstName,
@@ -38,32 +39,27 @@ class Student {
       'joining_date': joiningDate.toIso8601String(),
       'phone_number': phoneNumber,
       'quardian_phone_number': quardianPhoneNumber,
+      'isActive': isActive,
+      // 'surah_id': surahId,
     };
   }
 
   factory Student.fromJson(Map<String, dynamic> json) {
+    print("heeeere: ${json['surah']}");
     return Student(
       id: json['id'] ?? 0,
-      firstName: json['first_name'] ?? 'Unknown', // Handle null
-      fatherName: json['father_name'] ?? 'Unknown', // Handle null
-      lastName: json['last_name'] ?? 'Unknown', // Handle null
-      bornDate: json['born_date'] is String
-          ? DateTime.parse(json['born_date'])
-          : DateTime.tryParse(json['born_date']?.toString() ?? '') ??
-              DateTime.now(),
-      joiningDate: json['joining_date'] is String
-          ? DateTime.parse(json['joining_date'])
-          : DateTime.tryParse(json['joining_date']?.toString() ?? '') ??
-              DateTime.now(),
-      phoneNumber: json['phone_number'] ?? 'Unknown', // Handle null
-      quardianPhoneNumber:
-          json['quardian_phone_number'] ?? 'Unknown', // Handle null
+      firstName: json['first_name'] ?? 'Unknown',
+      fatherName: json['father_name'] ?? 'Unknown',
+      lastName: json['last_name'] ?? 'Unknown',
+      bornDate: json['born_date'].toDate(),
+      joiningDate: json['joining_date'].toDate(),
+      phoneNumber: json['phone_number'] ?? 'Unknown',
+      quardianPhoneNumber: json['quardian_phone_number'] ?? 'Unknown',
       isActive: json['isActive'] ?? true,
       studentDailyRecords: json['StudentDailyRecord'] != null
           ? StudentDailyRecord.fromJsonList(json['StudentDailyRecord'])
-          : [], // Handle null
-      surahId: json['surah_id'],
-      surah: Surah.fromJson(json['Surah']),
+          : [],
+      surah: Surah.fromJson(json['surah']),
     );
   }
 }
