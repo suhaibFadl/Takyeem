@@ -50,7 +50,6 @@ class _NavBarState extends State<NavBar> {
     AddStudentPage(),
     HomePage(),
     const ReportsMain(),
-    TestPage(),
   ];
 
   @override
@@ -106,7 +105,7 @@ class _NavBarState extends State<NavBar> {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.table_rows_rounded), label: 'reports'),
-            BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'reports'),
+            // BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'reports'),
 
             // BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
             // BottomNavigationBarItem(

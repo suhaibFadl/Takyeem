@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -26,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await authService.signInWithEmailPassword(email, password);
     } catch (e) {
+      log("Errorrrrrrrrrrrrr: ${e.toString()}");
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Error: $e")));
@@ -47,9 +50,18 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                Center(
+                  child: Text(
+                    "تقيـيـم",
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 64,
+                        ),
+                  ),
+                ),
+                const Gap(84),
                 Text(
                   "تسجيل الدخول",
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const Gap(32),
                 FormBuilderTextField(

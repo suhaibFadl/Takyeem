@@ -1,6 +1,5 @@
 part of 'report_bloc.dart';
 
-@immutable
 sealed class ReportEvent {}
 
 final class LoadMainDataEvent extends ReportEvent {}

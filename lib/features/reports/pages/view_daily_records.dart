@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:takyeem/features/reports/blocs/bloc/report_bloc.dart';
+import 'package:takyeem/features/reports/blocs/report_bloc/report_bloc.dart';
 
 class ViewDailyRecords extends StatelessWidget {
   const ViewDailyRecords({super.key});
@@ -13,6 +13,8 @@ class ViewDailyRecords extends StatelessWidget {
     // });
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         // centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -231,25 +233,25 @@ class ViewDailyRecords extends StatelessWidget {
                                                                 right: 16),
                                                         margin: const EdgeInsets
                                                             .only(top: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          border: Border(
-                                                            top: BorderSide(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                              width: 1,
-                                                            ),
-                                                            bottom: BorderSide(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                              width: 1,
-                                                            ),
-                                                          ),
-                                                        ),
+                                                        // decoration:
+                                                        //     BoxDecoration(
+                                                        //   border: Border(
+                                                        //     top: BorderSide(
+                                                        //       color: Theme.of(
+                                                        //               context)
+                                                        //           .colorScheme
+                                                        //           .primary,
+                                                        //       width: 1,
+                                                        //     ),
+                                                        //     bottom: BorderSide(
+                                                        //       color: Theme.of(
+                                                        //               context)
+                                                        //           .colorScheme
+                                                        //           .primary,
+                                                        //       width: 1,
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         height: 260,
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -303,10 +305,15 @@ class ViewDailyRecords extends StatelessWidget {
                                                   },
                                                 );
                                               },
-                                        icon: Icon(Icons.note_add,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
+                                        icon: Icon(
+                                          Icons.note_add,
+                                          color: state.studentsRecords![index]
+                                                  .note.isEmpty
+                                              ? Theme.of(context).disabledColor
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(

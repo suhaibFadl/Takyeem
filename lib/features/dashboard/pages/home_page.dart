@@ -5,6 +5,9 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:takyeem/features/auth/auth_service.dart';
 import 'package:takyeem/features/dashboard/blocs/dashboard_bloc/dashboard_bloc.dart';
 import 'package:takyeem/features/dashboard/pages/create_new_month.dart';
+import 'package:takyeem/features/reports/pages/view_daily_records.dart';
+
+import '../../reports/blocs/report_bloc/report_bloc.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -289,6 +292,40 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
+                      const Gap(24),
+                      Container(
+                        child: TextButton(
+                          onPressed: () {
+                            context
+                                .read<ReportBloc>()
+                                .add(LoadTodayRecordsEvent());
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider.value(
+                                  value: context.read<ReportBloc>(),
+                                  child: const ViewDailyRecords(),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "عرض تقرير اليوم",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  fontSize: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .fontSize,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  decoration: TextDecoration.underline,
+                                ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

@@ -2,10 +2,10 @@ import 'package:takyeem/features/students/models/student.dart';
 
 abstract class StudentEvent {}
 
-class GetAllStudents extends StudentEvent {}
+class AddNewStudentEvent extends StudentEvent {}
 
-class AddStudentEvent extends StudentEvent {
+class SendStudentDataEvent extends StudentEvent {
   final Student student;
 
-  AddStudentEvent({required this.student});
+  SendStudentDataEvent({required this.student});
 }

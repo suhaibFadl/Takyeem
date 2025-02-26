@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:takyeem/features/reports/blocs/bloc/report_bloc.dart';
+import 'package:takyeem/features/reports/blocs/student_monthly_reports/student_monthly_reports_bloc.dart';
 import 'package:takyeem/features/reports/entities/hijri_months_list.dart';
 import 'package:takyeem/widgets/dropdown/cubit/dropdown_cubit.dart';
+
+import '../blocs/report_bloc/report_bloc.dart';
 
 class StudentReport extends StatelessWidget {
   StudentReport({super.key, required this.studentId});
@@ -15,6 +19,13 @@ class StudentReport extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          color: Theme.of(context).colorScheme.surface,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -28,12 +39,15 @@ class StudentReport extends StatelessWidget {
           ],
         ),
       ),
-      body: BlocBuilder<ReportBloc, ReportState>(
+      body: BlocBuilder<StudentMonthlyReportsBloc, StudentMonthlyReportsState>(
         builder: (context, state) {
+          log("***************state : $state");
           if (state is ReportInitial) {
-            context.read<ReportBloc>().add(LoadStudentReportEvent(studentId));
+            context
+                .read<StudentMonthlyReportsBloc>()
+                .add(LoadStudentInformationEvent(studentId));
           }
-          if (state is StudentReportState) {
+          if (state is StudentMonthlyReportsLoaded) {
             var student = state.student;
 
             // توفير Cubit لقائمة السنوات الهجرية
@@ -92,7 +106,7 @@ class StudentReport extends StatelessWidget {
                                 "تاريخ الالتحاق: ${DateFormat('yyyy/MM/dd').format(student.joiningDate)}",
                               ),
                               Text(
-                                "مقدار الحفظ: ${student.surah.name} ",
+                                "مقدار الحفظ: ${student.surah?.name} ",
                                 textAlign: TextAlign.end,
                               ),
                             ],
@@ -191,7 +205,7 @@ class StudentReport extends StatelessWidget {
                               height: 150,
                               width: MediaQuery.of(context).size.width * .3,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
@@ -284,7 +298,7 @@ class StudentReport extends StatelessWidget {
                               height: 150,
                               width: MediaQuery.of(context).size.width * .3,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
@@ -377,7 +391,7 @@ class StudentReport extends StatelessWidget {
                               height: 150,
                               width: MediaQuery.of(context).size.width * .3,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
@@ -474,7 +488,7 @@ class StudentReport extends StatelessWidget {
                           padding: const EdgeInsets.all(16.0),
                           width: MediaQuery.of(context).size.width * .9,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.secondary,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
@@ -522,6 +536,25 @@ class StudentReport extends StatelessWidget {
                             ],
                           ),
                         ),
+                        const Gap(32),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "عرض تفاصيل الشهر",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  fontSize: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .fontSize,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  decoration: TextDecoration.underline,
+                                ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -529,9 +562,9 @@ class StudentReport extends StatelessWidget {
               ),
             );
           }
-          if (state is ReportErrorState) {
+          if (state is StudentMonthlyReportsError) {
             return Center(
-              child: Text(state.error),
+              child: Text(state.message),
             );
           }
           return const SizedBox.shrink();

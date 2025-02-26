@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:takyeem/features/reports/Services/reports_service.dart';
 import 'package:takyeem/features/reports/models/daily_record_status.dart';
 import 'package:takyeem/features/reports/models/daily_record_type.dart';

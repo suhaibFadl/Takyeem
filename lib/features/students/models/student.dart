@@ -12,7 +12,7 @@ class Student {
   final String quardianPhoneNumber;
   final List<StudentDailyRecord>? studentDailyRecords;
   final int surahId;
-  final Surah surah;
+  final Surah? surah;
   bool isActive = true;
 
   Student({
@@ -44,26 +44,25 @@ class Student {
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(
       id: json['id'] ?? 0,
-      firstName: json['first_name'] ?? 'Unknown', // Handle null
-      fatherName: json['father_name'] ?? 'Unknown', // Handle null
-      lastName: json['last_name'] ?? 'Unknown', // Handle null
+      firstName: json['first_name'] ?? 'Unknown',
+      fatherName: json['father_name'] ?? 'Unknown',
+      lastName: json['last_name'] ?? 'Unknown',
       bornDate: json['born_date'] is String
           ? DateTime.parse(json['born_date'])
-          : DateTime.tryParse(json['born_date']?.toString() ?? '') ??
-              DateTime.now(),
+          : json['born_date'] ?? DateTime.now(),
       joiningDate: json['joining_date'] is String
           ? DateTime.parse(json['joining_date'])
-          : DateTime.tryParse(json['joining_date']?.toString() ?? '') ??
-              DateTime.now(),
-      phoneNumber: json['phone_number'] ?? 'Unknown', // Handle null
-      quardianPhoneNumber:
-          json['quardian_phone_number'] ?? 'Unknown', // Handle null
+          : json['joining_date'] ?? DateTime.now(),
+      phoneNumber: json['phone_number'] ?? json['phoneNumber'] ?? 'Unknown',
+      quardianPhoneNumber: json['quardian_phone_number'] ??
+          json['quardianPhoneNumber'] ??
+          'Unknown',
       isActive: json['isActive'] ?? true,
       studentDailyRecords: json['StudentDailyRecord'] != null
           ? StudentDailyRecord.fromJsonList(json['StudentDailyRecord'])
-          : [], // Handle null
-      surahId: json['surah_id'],
-      surah: Surah.fromJson(json['Surah']),
+          : [],
+      surahId: int.tryParse(json['surah_Id']?.toString() ?? '0') ?? 0,
+      surah: json['Surah'] != null ? Surah.fromJson(json['Surah']) : null,
     );
   }
 }

@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:takyeem/features/reports/blocs/bloc/report_bloc.dart';
+import 'package:takyeem/features/reports/blocs/student_monthly_reports/student_monthly_reports_bloc.dart';
+import 'package:takyeem/features/reports/blocs/students_bloc/students_bloc.dart';
+import 'package:takyeem/features/reports/blocs/students_bloc/students_event.dart';
+import 'package:takyeem/features/reports/blocs/students_bloc/students_state.dart';
 import 'package:takyeem/features/reports/pages/student_report.dart';
-import 'package:takyeem/features/students/bloc/student_bloc.dart';
-import 'package:takyeem/features/students/bloc/student_event.dart';
-import 'package:takyeem/features/students/bloc/student_state.dart';
 
 class MonthlyResultsList extends StatelessWidget {
   const MonthlyResultsList({super.key});
@@ -14,6 +16,7 @@ class MonthlyResultsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         // centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -27,12 +30,13 @@ class MonthlyResultsList extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: BlocBuilder<StudentBloc, StudentState>(
+        child: BlocBuilder<StudentsBloc, StudentsState>(
           builder: (context, state) {
-            if (state is StudentInitialState) {
-              context.read<StudentBloc>().add(GetAllStudents());
+            log("state: $state");
+            if (state is StudentsInitialState) {
+              context.read<StudentsBloc>().add(GetAllStudents());
             }
-            if (state is ReportLoadingState) {
+            if (state is StudentsLoadingState) {
               return LoadingIndicator(
                 indicatorType: Indicator.ballClipRotatePulse,
                 colors: [
@@ -52,7 +56,7 @@ class MonthlyResultsList extends StatelessWidget {
                       ),
                     )
                   : SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.8,
+                      height: MediaQuery.of(context).size.height,
                       child: ListView.builder(
                         itemCount: state.students.length,
                         itemBuilder: (context, index) {
@@ -89,15 +93,17 @@ class MonthlyResultsList extends StatelessWidget {
                                     ),
                                   ),
                                   onPressed: () {
-                                    context.read<ReportBloc>().add(
-                                        LoadStudentReportEvent(
+                                    context
+                                        .read<StudentMonthlyReportsBloc>()
+                                        .add(LoadStudentInformationEvent(
                                             state.students[index].id));
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             BlocProvider.value(
-                                          value: context.read<ReportBloc>(),
+                                          value: context.read<
+                                              StudentMonthlyReportsBloc>(),
                                           child: StudentReport(
                                             studentId: state.students[index].id,
                                           ),
@@ -122,7 +128,7 @@ class MonthlyResultsList extends StatelessWidget {
                         },
                       ),
                     );
-            } else if (state is StudentErrorState) {}
+            } else if (state is StudentsErrorState) {}
             return const SizedBox.shrink();
           },
         ),
