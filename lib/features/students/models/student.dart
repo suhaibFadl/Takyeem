@@ -38,6 +38,7 @@ class Student {
       'joining_date': joiningDate.toIso8601String(),
       'phone_number': phoneNumber,
       'quardian_phone_number': quardianPhoneNumber,
+      'surah_id': surahId,
     };
   }
 
@@ -61,7 +62,7 @@ class Student {
       studentDailyRecords: json['StudentDailyRecord'] != null
           ? StudentDailyRecord.fromJsonList(json['StudentDailyRecord'])
           : [],
-      surahId: int.tryParse(json['surah_Id']?.toString() ?? '0') ?? 0,
+      surahId: json['surah_Id'] ?? 0,
       surah: json['Surah'] != null ? Surah.fromJson(json['Surah']) : null,
     );
   }

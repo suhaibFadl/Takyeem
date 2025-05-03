@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:takyeem/features/reports/models/daily_record_status.dart';
 import 'package:takyeem/features/reports/models/daily_record_type.dart';
@@ -28,7 +30,8 @@ class ReportsService {
     final studentResponse = await _supabaseClient
         .from('Students')
         .select('*, Surah(*)')
-        .eq('isActive', 'true');
+        .eq('isActive', 'true')
+        .order('surah_id', ascending: true);
 
     DateTime toDate = DateTime.now();
     DateTime fromDate = DateTime(toDate.year, toDate.month, toDate.day, 0, 0);
@@ -81,12 +84,14 @@ class ReportsService {
     final response = await _supabaseClient
         .from('StudentDailyRecord')
         .select('*, Students(*, Surah(*))')
-        .gte('date',
-            fromDate.toIso8601String()) // Use gte for greater than or equal to
-        .lt('date', toDate.toIso8601String());
-    return response
-        .map((record) => StudentDailyRecord.fromJson(record))
-        .toList();
+        .gte('date', fromDate.toIso8601String())
+        .lt('date', toDate.toIso8601String())
+        .order('surah_id', ascending: true);
+
+    var records =
+        response.map((record) => StudentDailyRecord.fromJson(record)).toList();
+
+    return records;
   }
 
   Future<Student> getStudentReport(int id) async {
@@ -107,5 +112,56 @@ class ReportsService {
     final response =
         await _supabaseClient.from('hijri_months').select('*').eq('year', year);
     return response.map((month) => month['name'] as String).toList();
+  }
+
+  Future<bool> isTodayStudyDay() async {
+    String dayName = DateFormat('EEEE').format(DateTime.now());
+    debugPrint("******************${dayName}");
+    final response = await _supabaseClient
+        .from('Study Days')
+        .select('*')
+        .eq('english_name', dayName);
+    debugPrint("******************${response}");
+    return response.isNotEmpty;
+  }
+
+  Future<List<StudentDailyRecord>> getDailyRecordsForDate(DateTime date) async {
+    // Calculate the start and end of the given date
+    final fromDate = DateTime(date.year, date.month, date.day);
+    final toDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+    final response = await _supabaseClient
+        .from('StudentDailyRecord')
+        .select('*, Students(*, Surah(*))')
+        // Use the provided date range
+        .gte('date', fromDate.toIso8601String())
+        .lt('date', toDate.toIso8601String());
+    // .order('student_id', ascending: true); // Keep or remove order as needed
+
+    // Check if the response is not empty and is a list
+    if (response != null && response is List) {
+      final records = response
+          .map((record) => StudentDailyRecord.fromJson(record))
+          .toList();
+
+      // Optional: Sort in Dart if DB sorting is complex/not working
+      // records.sort((a, b) => (a.student?.surahId ?? 0).compareTo(b.student?.surahId ?? 0));
+
+      return records;
+    } else {
+      // Handle cases where response is null or not a list
+      return []; // Return an empty list or throw an error
+    }
+  }
+
+  Future<bool> isStudyDay(DateTime date) async {
+    String dayName = DateFormat('EEEE', 'en_US')
+        .format(date); // Ensure consistent locale if needed
+    final response = await _supabaseClient
+        .from('Study Days') // Make sure table name is correct
+        .select('*')
+        .eq('english_name', dayName)
+        .limit(1); // Optimization: only need to know if one exists
+    return response.isNotEmpty;
   }
 }

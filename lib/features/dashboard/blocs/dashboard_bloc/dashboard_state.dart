@@ -13,11 +13,13 @@ final class DashboardLoadedState extends DashboardState {
   int helga;
   int thomon;
   int horuf;
+  int absentees;
 
   DashboardLoadedState({
     required this.today,
     required this.totalStudents,
     required this.attendances,
+    required this.absentees,
     required this.helga,
     required this.thomon,
     required this.horuf,
@@ -28,5 +30,6 @@ final class CreateNewMonthState extends DashboardState {}
 
 final class DashboardErrorState extends DashboardState {
   final String error;
+
   DashboardErrorState({required this.error});
 }

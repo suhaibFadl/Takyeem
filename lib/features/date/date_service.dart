@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:takyeem/features/date/models/hijri_month.dart';
 
@@ -14,7 +16,8 @@ class DateService {
         .select('*')
         .eq('name', name)
         .eq('year', year);
-    return HijriMonth.fromJson(response[0]);
+
+    return response.isEmpty ? null : HijriMonth.fromJson(response[0]);
   }
 
   Future<void> createNewMonth(HijriMonth month) async {

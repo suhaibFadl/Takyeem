@@ -82,7 +82,7 @@ class StudentReport extends StatelessWidget {
                         const Gap(10),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 14.0,
+                            horizontal: 10.0,
                             vertical: 8.0,
                           ),
                           decoration: BoxDecoration(
@@ -103,9 +103,21 @@ class StudentReport extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                 "تاريخ الالتحاق: ${DateFormat('yyyy/MM/dd').format(student.joiningDate)}",
                               ),
                               Text(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                 "مقدار الحفظ: ${student.surah?.name} ",
                                 textAlign: TextAlign.end,
                               ),
@@ -203,7 +215,7 @@ class StudentReport extends StatelessWidget {
                           children: [
                             Container(
                               height: 150,
-                              width: MediaQuery.of(context).size.width * .3,
+                              width: MediaQuery.of(context).size.width * .29,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(10),
@@ -296,7 +308,7 @@ class StudentReport extends StatelessWidget {
                             ),
                             Container(
                               height: 150,
-                              width: MediaQuery.of(context).size.width * .3,
+                              width: MediaQuery.of(context).size.width * .29,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(10),
@@ -389,7 +401,7 @@ class StudentReport extends StatelessWidget {
                             ),
                             Container(
                               height: 150,
-                              width: MediaQuery.of(context).size.width * .3,
+                              width: MediaQuery.of(context).size.width * .29,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(10),

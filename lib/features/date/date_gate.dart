@@ -1,3 +1,6 @@
+
+import 'dart:developer';
+
 import 'package:hijri/hijri_calendar.dart';
 import 'package:takyeem/features/date/date_service.dart';
 import 'package:takyeem/features/date/models/today.dart';
@@ -11,7 +14,7 @@ class DateGate {
       hDate.longMonthName,
       hDate.hYear,
     );
-
+    log("Hijri Month: $currentHijriMonth");
     if (currentHijriMonth == null) return null;
 
     final shiftedDate =

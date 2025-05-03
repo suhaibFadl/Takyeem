@@ -12,19 +12,26 @@ final class ReportLoadedState extends ReportState {
   final List<DailyRecordType> dailyRecordType;
   final List<Student>? studentswithOutRecords;
   final List<Sheikh> sheikhs;
+  final List<Surah> surahs;
 
   ReportLoadedState(
     this.dailyRecordStatus,
     this.dailyRecordType,
     this.studentswithOutRecords,
     this.sheikhs,
+    this.surahs,
   );
 }
 
-final class TodayRecordsState extends ReportState {
+class RecordsLoadedState extends ReportState {
   final List<StudentDailyRecord>? studentsRecords;
+  final DateTime selectedDate;
 
-  TodayRecordsState(this.studentsRecords);
+  RecordsLoadedState(
+      {required this.studentsRecords, required this.selectedDate});
+
+  @override
+  List<Object?> get props => [studentsRecords, selectedDate];
 }
 
 final class StudentReportState extends ReportState {
@@ -47,7 +54,11 @@ final class StudentReportState extends ReportState {
   }
 }
 
-final class ReportError extends ReportState {}
+final class NotStudyDayState extends ReportState {
+  final String message;
+
+  NotStudyDayState(this.message);
+}
 
 final class ReportErrorState extends ReportState {
   final String error;

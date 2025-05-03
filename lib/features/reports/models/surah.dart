@@ -12,4 +12,12 @@ class Surah {
       json['order'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'order': order,
+    };
+  }
 }

@@ -10,7 +10,10 @@ class StudentService {
   }
 
   Future<List<Student>> getAllStudents() async {
-    final response = await _supabase.from('Students').select('*, Surah(*)');
+    final response = await _supabase
+        .from('Students')
+        .select('*, Surah(*)')
+        .order('surah_id', ascending: true);
     return response.map((e) => Student.fromJson(e)).toList();
   }
 
@@ -29,5 +32,9 @@ class StudentService {
   Future<Surah> getSurahById(int id) async {
     final response = await _supabase.from('Surah').select('*').eq('id', id);
     return Surah.fromJson(response.first);
+  }
+
+  Future<void> updateStudentSurah(int id, int surahId) async {
+    await _supabase.from('Students').update({'surah_id': surahId}).eq('id', id);
   }
 }

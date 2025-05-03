@@ -15,9 +15,26 @@ class DashboardService {
     final response = await _supabase
         .from('StudentDailyRecord')
         .select('*')
+        .neq('type', 'غائب بعذر')
+        .neq('type', 'غائب بدون عذر')
         .gte('date',
             fromDate.toIso8601String()) // Use gte for greater than or equal to
         .lt('date', toDate.toIso8601String());
+    return response.length;
+  }
+
+  Future<int> getAbsentees() async {
+    DateTime toDate = DateTime.now();
+    DateTime fromDate = DateTime(toDate.year, toDate.month, toDate.day, 0, 0);
+
+    final response = await _supabase
+        .from('StudentDailyRecord')
+        .select()
+        .inFilter('type', ['غائب بعذر', 'غائب بدون عذر'])
+        .gte('date',
+            fromDate.toIso8601String()) // Use gte for greater than or equal to
+        .lt('date', toDate.toIso8601String());
+    print("response: ${response.length}");
     return response.length;
   }
 

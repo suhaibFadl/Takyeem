@@ -4,6 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:takyeem/features/reports/models/surah.dart';
 import 'package:takyeem/features/reports/widgets/snackbar_message.dart';
 import 'package:takyeem/features/students/bloc/student_bloc.dart';
 import 'package:takyeem/features/students/bloc/student_event.dart';
@@ -298,7 +299,7 @@ class AddStudentPage extends StatelessWidget {
                           ),
                         ),
                         const Gap(12),
-                        FormBuilderDropdown<String>(
+                        FormBuilderDropdown<int>(
                           name: 'surah_Id',
                           style: Theme.of(context).textTheme.bodyMedium,
                           decoration: InputDecoration(
@@ -328,7 +329,7 @@ class AddStudentPage extends StatelessWidget {
                           items: state.surahs
                               .map((surah) => DropdownMenuItem(
                                     alignment: AlignmentDirectional.centerEnd,
-                                    value: surah.id.toString(),
+                                    value: surah.id,
                                     child: Text(
                                       surah.name,
                                       textDirection: TextDirection.rtl,
@@ -358,7 +359,8 @@ class AddStudentPage extends StatelessWidget {
                                 debugPrint("******************$formData");
                                 Student studentData =
                                     Student.fromJson(formData!);
-                                debugPrint("******************$studentData");
+                                debugPrint(
+                                    "******************${studentData.surahId}");
                                 context.read<StudentBloc>().add(
                                     SendStudentDataEvent(student: studentData));
                               } else {

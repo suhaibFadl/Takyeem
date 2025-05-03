@@ -23,3 +23,13 @@ final class AddDailyRecordEvent extends ReportEvent {
 
   AddDailyRecordEvent(this.dailyRecord);
 }
+
+// Event to load records for a specific date
+class LoadRecordsByDateEvent extends ReportEvent {
+  final DateTime date;
+
+  LoadRecordsByDateEvent({required this.date});
+
+  @override
+  List<Object> get props => [date];
+}

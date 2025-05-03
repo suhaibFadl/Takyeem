@@ -13,6 +13,7 @@ import 'package:takyeem/features/reports/blocs/students_bloc/students_bloc.dart'
 import 'package:takyeem/features/students/bloc/student_bloc.dart';
 import 'package:takyeem/features/students/service/studentService.dart';
 import 'package:takyeem/themes/app_theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +62,16 @@ class MyApp extends StatelessWidget {
         title: 'تقييم',
         theme: appTheme,
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ar', ''),
+          Locale('en', ''),
+        ],
+        locale: const Locale('en'),
         home: const AuthGate(),
       ),
     );

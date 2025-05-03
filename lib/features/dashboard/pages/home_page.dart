@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -5,6 +7,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:takyeem/features/auth/auth_service.dart';
 import 'package:takyeem/features/dashboard/blocs/dashboard_bloc/dashboard_bloc.dart';
 import 'package:takyeem/features/dashboard/pages/create_new_month.dart';
+import 'package:takyeem/features/dashboard/widgets/pie_chart.dart';
 import 'package:takyeem/features/reports/pages/view_daily_records.dart';
 
 import '../../reports/blocs/report_bloc/report_bloc.dart';
@@ -49,6 +52,7 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
+            log("state: $state");
             if (state is DashboardInitial) {
               context.read<DashboardBloc>().add((DashboardInitialEvent()));
             }
@@ -73,71 +77,272 @@ class HomePage extends StatelessWidget {
                         .read<DashboardBloc>()
                         .add((DashboardInitialEvent()));
                   },
-                  child: ListView(
-                    children: [
-                      const Gap(12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Theme.of(context).colorScheme.primary,
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  Colors.black.withOpacity(0.2), // Shadow color
-                              offset:
-                                  const Offset(0, 4), // Shadow offset (x, y)
-                              blurRadius: 8, // Shadow blur radius
-                              spreadRadius: 2, // Shadow spread radius
-                            ),
-                          ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView(
+                      children: [
+                        const Gap(12),
+                        Text(
+                          textDirection: TextDirection.rtl,
+                          '${state.today.week_day}, ${state.today.day} ${state.today.month_name}  ${state.today.year} هـ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            textDirection: TextDirection.rtl,
-                            '${state.today.week_day}, ${state.today.day} ${state.today.month_name}  ${state.today.year} هـ',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      color: Colors.white,
-                                    ),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(vertical: 12),
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(12),
+                        //     color: Theme.of(context).colorScheme.primary,
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color:
+                        //             Colors.black.withOpacity(0.2), // Shadow color
+                        //         offset:
+                        //             const Offset(0, 4), // Shadow offset (x, y)
+                        //         blurRadius: 8, // Shadow blur radius
+                        //         spreadRadius: 2, // Shadow spread radius
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: Align(
+                        //     alignment: Alignment.center,
+                        //     child: Text(
+                        //       textDirection: TextDirection.rtl,
+                        //       '${state.today.week_day}, ${state.today.day} ${state.today.month_name}  ${state.today.year} هـ',
+                        //       style:
+                        //           Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        //                 color: Colors.white,
+                        //               ),
+                        //     ),
+                        //   ),
+                        // ),
+                        const Gap(12),
+                        Container(
+                          // padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withAlpha(20), // 0.3 * 255 ≈ 76
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment
+                                .spaceAround, // Center the chart
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${state.totalStudents}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      Gap(4),
+                                      Text('العدد الكلي'),
+                                      Gap(4),
+                                      Container(
+                                        width: 10,
+                                        height: 10,
+                                        color: const Color.fromARGB(
+                                            154, 158, 158, 158),
+                                      ),
+                                    ],
+                                  ),
+                                  Gap(12),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${state.attendances}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      Gap(4),
+                                      Text('الحضور'),
+                                      Gap(4),
+                                      Container(
+                                        width: 10,
+                                        height: 10,
+                                        color: Colors.blue,
+                                      ),
+                                    ],
+                                  ),
+                                  Gap(12),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${state.absentees}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      Gap(4),
+                                      Text('الغياب'),
+                                      Gap(4),
+                                      Container(
+                                        width: 10,
+                                        height: 10,
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 200, // Fixed height
+                                // width: MediaQuery.of(context).size.width *
+                                //     0.8, // Fixed width
+                                child: PieChartSample2(
+                                  primaryTitle: 'الحضور',
+                                  secondaryTitle: 'الغياب',
+                                  primaryValue: state.totalStudents > 0
+                                      ? (state.attendances /
+                                              state.totalStudents *
+                                              100)
+                                          .roundToDouble()
+                                      : 0,
+                                  secondaryValue: state.totalStudents > 0
+                                      ? ((state.absentees) /
+                                              state.totalStudents *
+                                              100)
+                                          .roundToDouble()
+                                      : 0,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      const Gap(12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Theme.of(context).colorScheme.primary,
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  Colors.black.withOpacity(0.2), // Shadow color
-                              offset:
-                                  const Offset(0, 4), // Shadow offset (x, y)
-                              blurRadius: 8, // Shadow blur radius
-                              spreadRadius: 2, // Shadow spread radius
-                            ),
-                          ],
-                        ),
-                        child: Row(
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(vertical: 12),
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(12),
+                        //     color: Theme.of(context).colorScheme.primary,
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color:
+                        //             Colors.black.withOpacity(0.2), // Shadow color
+                        //         offset:
+                        //             const Offset(0, 4), // Shadow offset (x, y)
+                        //         blurRadius: 8, // Shadow blur radius
+                        //         spreadRadius: 2, // Shadow spread radius
+                        //       ),
+                        //     ],
+                        //   ),
+
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Container(
+                        //         width: MediaQuery.of(context).size.width * 0.45,
+                        //         padding: const EdgeInsets.symmetric(
+                        //             horizontal: 8, vertical: 12),
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(12),
+                        //           color: Theme.of(context).colorScheme.primary,
+                        //         ),
+                        //         child: Column(
+                        //           mainAxisAlignment: MainAxisAlignment.center,
+                        //           crossAxisAlignment: CrossAxisAlignment.center,
+                        //           children: [
+                        //             Text(
+                        //               'الحضـــــور',
+                        //               style: Theme.of(context)
+                        //                   .textTheme
+                        //                   .bodyLarge!
+                        //                   .copyWith(
+                        //                     color: Colors.white,
+                        //                   ),
+                        //             ),
+                        //             const Gap(12),
+                        //             Text(
+                        //               '${state.attendances}',
+                        //               style: Theme.of(context)
+                        //                   .textTheme
+                        //                   .bodyLarge!
+                        //                   .copyWith(
+                        //                     color: Colors.white,
+                        //                   ),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //       // Gap(52),
+                        //       Container(
+                        //         width: MediaQuery.of(context).size.width * 0.45,
+                        //         padding: const EdgeInsets.symmetric(
+                        //             horizontal: 8, vertical: 12),
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(12),
+                        //           color: Theme.of(context).colorScheme.primary,
+                        //         ),
+                        //         child: Column(
+                        //           mainAxisAlignment: MainAxisAlignment.center,
+                        //           crossAxisAlignment: CrossAxisAlignment.center,
+                        //           children: [
+                        //             Text(
+                        //               'العدد الكلي',
+                        //               style: Theme.of(context)
+                        //                   .textTheme
+                        //                   .bodyLarge!
+                        //                   .copyWith(
+                        //                     color: Colors.white,
+                        //                   ),
+                        //             ),
+                        //             const Gap(12),
+                        //             Text(
+                        //               '${state.totalStudents}',
+                        //               style: Theme.of(context)
+                        //                   .textTheme
+                        //                   .bodyLarge!
+                        //                   .copyWith(
+                        //                     color: Colors.white,
+                        //                   ),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+
+                        // ),
+                        const Gap(24),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
                               width: MediaQuery.of(context).size.width * 0.45,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
+                                horizontal: 8,
+                                vertical: 12,
+                              ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 color: Theme.of(context).colorScheme.primary,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.2), // Shadow color
+                                    offset: const Offset(
+                                        0, 4), // Shadow offset (x, y)
+                                    blurRadius: 8, // Shadow blur radius
+                                    spreadRadius: 2, // Shadow spread radius
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'الحضـــــور',
+                                    'ثمن',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
@@ -147,7 +352,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                   const Gap(12),
                                   Text(
-                                    '${state.attendances}',
+                                    '${state.thomon}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
@@ -166,13 +371,23 @@ class HomePage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 color: Theme.of(context).colorScheme.primary,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.2), // Shadow color
+                                    offset: const Offset(
+                                        0, 4), // Shadow offset (x, y)
+                                    blurRadius: 8, // Shadow blur radius
+                                    spreadRadius: 2, // Shadow spread radius
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'العدد الكلي',
+                                    'حلقة',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
@@ -182,7 +397,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                   const Gap(12),
                                   Text(
-                                    '${state.totalStudents}',
+                                    '${state.helga}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
@@ -195,139 +410,42 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                      ),
-                      const Gap(24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 12,
+                        const Gap(24),
+                        Container(
+                          child: TextButton(
+                            onPressed: () {
+                              context
+                                  .read<ReportBloc>()
+                                  .add(LoadTodayRecordsEvent());
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider.value(
+                                    value: context.read<ReportBloc>(),
+                                    child: const ViewDailyRecords(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "عرض تقرير اليوم",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .fontSize,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    decoration: TextDecoration.underline,
+                                  ),
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Theme.of(context).colorScheme.primary,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.2), // Shadow color
-                                  offset: const Offset(
-                                      0, 4), // Shadow offset (x, y)
-                                  blurRadius: 8, // Shadow blur radius
-                                  spreadRadius: 2, // Shadow spread radius
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'ثمن',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      ),
-                                ),
-                                const Gap(12),
-                                Text(
-                                  '${state.thomon}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Gap(52),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Theme.of(context).colorScheme.primary,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.2), // Shadow color
-                                  offset: const Offset(
-                                      0, 4), // Shadow offset (x, y)
-                                  blurRadius: 8, // Shadow blur radius
-                                  spreadRadius: 2, // Shadow spread radius
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'حلقة',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      ),
-                                ),
-                                const Gap(12),
-                                Text(
-                                  '${state.helga}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Gap(24),
-                      Container(
-                        child: TextButton(
-                          onPressed: () {
-                            context
-                                .read<ReportBloc>()
-                                .add(LoadTodayRecordsEvent());
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider.value(
-                                  value: context.read<ReportBloc>(),
-                                  child: const ViewDailyRecords(),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "عرض تقرير اليوم",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  fontSize: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .fontSize,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  decoration: TextDecoration.underline,
-                                ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

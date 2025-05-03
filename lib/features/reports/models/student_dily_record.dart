@@ -1,3 +1,4 @@
+import 'package:takyeem/features/reports/models/surah.dart';
 import 'package:takyeem/features/students/models/student.dart';
 
 class StudentDailyRecord {
@@ -9,6 +10,9 @@ class StudentDailyRecord {
   late String note;
   late DateTime date;
   late Student? student;
+  late int? surahId;
+  late Surah? surah;
+
   StudentDailyRecord({
     this.id,
     required this.studentId,
@@ -18,6 +22,8 @@ class StudentDailyRecord {
     required this.date,
     required this.note,
     this.student,
+    this.surahId,
+    this.surah,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +34,7 @@ class StudentDailyRecord {
       'sheikh': sheikh,
       'date': date.toIso8601String(),
       'note': note,
+      'surah_id': surahId,
     };
   }
 
@@ -44,6 +51,7 @@ class StudentDailyRecord {
       note: json['note'],
       student:
           json['Students'] != null ? Student.fromJson(json['Students']) : null,
+      surah: json['surah'] != null ? Surah.fromJson(json['surah']) : null,
     );
   }
 
