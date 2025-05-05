@@ -10,17 +10,53 @@ final class ReportLoadingState extends ReportState {}
 final class ReportLoadedState extends ReportState {
   final List<DailyRecordStatus> dailyRecordStatus;
   final List<DailyRecordType> dailyRecordType;
-  final List<Student>? studentswithOutRecords;
+  final List<Student>? allStudentsWithoutRecords;
+  final List<Student> filteredStudents;
   final List<Sheikh> sheikhs;
   final List<Surah> surahs;
+  final String currentSearchQuery;
 
-  ReportLoadedState(
-    this.dailyRecordStatus,
-    this.dailyRecordType,
-    this.studentswithOutRecords,
-    this.sheikhs,
-    this.surahs,
-  );
+  ReportLoadedState({
+    required this.dailyRecordStatus,
+    required this.dailyRecordType,
+    required this.allStudentsWithoutRecords,
+    required this.filteredStudents,
+    required this.sheikhs,
+    required this.surahs,
+    this.currentSearchQuery = "",
+  });
+
+  ReportLoadedState copyWith({
+    List<DailyRecordStatus>? dailyRecordStatus,
+    List<DailyRecordType>? dailyRecordType,
+    List<Student>? allStudentsWithoutRecords,
+    List<Student>? filteredStudents,
+    List<Sheikh>? sheikhs,
+    List<Surah>? surahs,
+    String? currentSearchQuery,
+  }) {
+    return ReportLoadedState(
+      dailyRecordStatus: dailyRecordStatus ?? this.dailyRecordStatus,
+      dailyRecordType: dailyRecordType ?? this.dailyRecordType,
+      allStudentsWithoutRecords:
+          allStudentsWithoutRecords ?? this.allStudentsWithoutRecords,
+      filteredStudents: filteredStudents ?? this.filteredStudents,
+      sheikhs: sheikhs ?? this.sheikhs,
+      surahs: surahs ?? this.surahs,
+      currentSearchQuery: currentSearchQuery ?? this.currentSearchQuery,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        dailyRecordStatus,
+        dailyRecordType,
+        allStudentsWithoutRecords,
+        filteredStudents,
+        sheikhs,
+        surahs,
+        currentSearchQuery,
+      ];
 }
 
 class RecordsLoadedState extends ReportState {

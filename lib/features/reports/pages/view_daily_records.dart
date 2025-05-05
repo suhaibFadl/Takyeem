@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:takyeem/features/reports/blocs/report_bloc/report_bloc.dart';
+import 'package:takyeem/features/reports/blocs/view_daily_records_bloc/view_daily_records_bloc.dart';
+import 'dart:ui' as ui;
 
 class ViewDailyRecords extends StatelessWidget {
-  const ViewDailyRecords({super.key});
+  ViewDailyRecords({super.key});
+
+  final TextEditingController _searchController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate) async {
     final DateTime? picked = await showDatePicker(
@@ -17,7 +20,8 @@ class ViewDailyRecords extends StatelessWidget {
       locale: const Locale('ar'),
     );
     if (picked != null && picked != initialDate) {
-      context.read<ReportBloc>().add(LoadRecordsByDateEvent(date: picked));
+      _searchController.clear();
+      context.read<ViewDailyRecordsBloc>().add(LoadRecordsEvent(picked));
     }
   }
 
@@ -27,12 +31,12 @@ class ViewDailyRecords extends StatelessWidget {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: BlocBuilder<ReportBloc, ReportState>(
+        title: BlocBuilder<ViewDailyRecordsBloc, ViewDailyRecordsState>(
           builder: (context, state) {
             DateTime displayedDate = DateTime.now();
             String titleText = "التقرير اليومي";
-
-            if (state is RecordsLoadedState) {
+            debugPrint("state: $state");
+            if (state is ViewDailyRecordsLoadedState) {
               displayedDate = state.selectedDate;
               final now = DateTime.now();
               if (displayedDate.year != now.year ||
@@ -70,67 +74,131 @@ class ViewDailyRecords extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: BlocBuilder<ReportBloc, ReportState>(
-          builder: (context, state) {
-            if (state is ReportInitial) {
-              context.read<ReportBloc>().add(LoadTodayRecordsEvent());
-              return Center(
-                child: LoadingIndicator(
-                  indicatorType: Indicator.ballClipRotatePulse,
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
-                  ],
-                  strokeWidth: 2,
-                  backgroundColor: Colors.transparent,
-                  pathBackgroundColor: Colors.transparent,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-              );
-            }
-            if (state is ReportLoadingState) {
-              return Center(
-                child: LoadingIndicator(
-                  indicatorType: Indicator.ballClipRotatePulse,
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
-                  ],
-                  strokeWidth: 2,
-                  backgroundColor: Colors.transparent,
-                  pathBackgroundColor: Colors.transparent,
-                ),
-              );
-            }
-            if (state is NotStudyDayState) {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(state.message),
-                      const Gap(10),
-                      ElevatedButton(
-                        onPressed: () => context
-                            .read<ReportBloc>()
-                            .add(LoadTodayRecordsEvent()),
-                        child: const Text("عرض تقرير اليوم"),
-                      )
-                    ],
+                child: TextField(
+                  controller: _searchController,
+                  textDirection: ui.TextDirection.rtl,
+                  decoration: InputDecoration(
+                    hintText: "البحث عن طالب...",
+                    hintTextDirection: ui.TextDirection.rtl,
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        context
+                            .read<ViewDailyRecordsBloc>()
+                            .add(SearchDailyRecordsEvent(""));
+                      },
+                    ),
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    filled: false,
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 15),
                   ),
+                  onChanged: (query) {
+                    context
+                        .read<ViewDailyRecordsBloc>()
+                        .add(SearchDailyRecordsEvent(query));
+                  },
                 ),
-              );
-            }
-            if (state is RecordsLoadedState) {
-              return state.studentsRecords == null ||
-                      state.studentsRecords!.isEmpty
-                  ? Center(
-                      child: Text(
-                        "لا يوجد سجلات لهذا اليوم",
-                        style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<ViewDailyRecordsBloc, ViewDailyRecordsState>(
+                builder: (context, state) {
+                  if (state is ViewDailyRecordsInitial) {
+                    context
+                        .read<ViewDailyRecordsBloc>()
+                        .add(LoadRecordsEvent(DateTime.now()));
+                    return Center(
+                      child: LoadingIndicator(
+                        indicatorType: Indicator.ballClipRotatePulse,
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary,
+                        ],
+                        strokeWidth: 2,
+                        backgroundColor: Colors.transparent,
+                        pathBackgroundColor: Colors.transparent,
                       ),
-                    )
-                  : SingleChildScrollView(
+                    );
+                  }
+                  if (state is ViewDailyRecordsLoadingState) {
+                    return Center(
+                      child: LoadingIndicator(
+                        indicatorType: Indicator.ballClipRotatePulse,
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary,
+                        ],
+                        strokeWidth: 2,
+                        backgroundColor: Colors.transparent,
+                        pathBackgroundColor: Colors.transparent,
+                      ),
+                    );
+                  }
+                  if (state is NotStudyDayState) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(state.message),
+                            const Gap(10),
+                            ElevatedButton(
+                              onPressed: () => context
+                                  .read<ViewDailyRecordsBloc>()
+                                  .add(LoadRecordsEvent(DateTime.now())),
+                              child: const Text("عرض تقرير اليوم"),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  if (state is ViewDailyRecordsLoadedState) {
+                    if (state.allStudentsRecords == null ||
+                        state.allStudentsRecords!.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "لا يوجد سجلات لهذا اليوم",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      );
+                    }
+
+                    final displayRecords = state.filteredStudentsRecords;
+
+                    if (displayRecords.isEmpty &&
+                        state.currentSearchQuery.isNotEmpty) {
+                      return Center(
+                          child: Text(
+                        "لا يوجد طالب مسجل بهذا الاسم: '${state.currentSearchQuery}'",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ));
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        _searchController.clear();
+                        context
+                            .read<ViewDailyRecordsBloc>()
+                            .add(LoadRecordsEvent(state.selectedDate));
+                      },
                       child: Column(
                         children: [
                           Container(
@@ -225,11 +293,11 @@ class ViewDailyRecords extends StatelessWidget {
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.75,
+                          Expanded(
                             child: ListView.builder(
-                              itemCount: state.studentsRecords!.length,
+                              itemCount: displayRecords.length,
                               itemBuilder: (context, index) {
+                                final record = displayRecords[index];
                                 return Container(
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 10),
@@ -261,10 +329,7 @@ class ViewDailyRecords extends StatelessWidget {
                                                 0.16,
                                         child: IconButton(
                                           padding: EdgeInsets.zero,
-                                          onPressed: state
-                                                  .studentsRecords![index]
-                                                  .note
-                                                  .isEmpty
+                                          onPressed: record.note.isEmpty
                                               ? null
                                               : () {
                                                   showDialog(
@@ -321,12 +386,8 @@ class ViewDailyRecords extends StatelessWidget {
                                                                     .end,
                                                             children: [
                                                               Text(
-                                                                state
-                                                                    .studentsRecords![
-                                                                        index]
-                                                                    .note,
+                                                                record.note,
                                                                 maxLines: 8,
-                                                                // textDirection: TextDirection.rtl,
                                                                 style: Theme.of(
                                                                         context)
                                                                     .textTheme
@@ -341,8 +402,7 @@ class ViewDailyRecords extends StatelessWidget {
                                                 },
                                           icon: Icon(
                                             Icons.note_add,
-                                            color: state.studentsRecords![index]
-                                                    .note.isEmpty
+                                            color: record.note.isEmpty
                                                 ? Theme.of(context)
                                                     .disabledColor
                                                 : Theme.of(context)
@@ -356,7 +416,7 @@ class ViewDailyRecords extends StatelessWidget {
                                             MediaQuery.of(context).size.width *
                                                 0.16,
                                         child: Text(
-                                          state.studentsRecords![index].sheikh,
+                                          record.sheikh,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.center,
@@ -367,7 +427,7 @@ class ViewDailyRecords extends StatelessWidget {
                                             MediaQuery.of(context).size.width *
                                                 0.18,
                                         child: Text(
-                                          state.studentsRecords![index].status,
+                                          record.status,
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -376,7 +436,7 @@ class ViewDailyRecords extends StatelessWidget {
                                             MediaQuery.of(context).size.width *
                                                 0.16,
                                         child: Text(
-                                          state.studentsRecords![index].type,
+                                          record.type,
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -385,7 +445,9 @@ class ViewDailyRecords extends StatelessWidget {
                                             MediaQuery.of(context).size.width *
                                                 0.21,
                                         child: Text(
-                                          "${state.studentsRecords![index].student?.firstName}  ${state.studentsRecords![index].student?.lastName}",
+                                          record.student != null
+                                              ? "${record.student!.firstName}  ${record.student!.lastName}"
+                                              : "غير معروف",
                                           textAlign: TextAlign.center,
                                           maxLines: 2,
                                           overflow: TextOverflow.clip,
@@ -400,11 +462,15 @@ class ViewDailyRecords extends StatelessWidget {
                         ],
                       ),
                     );
-            } else if (state is ReportErrorState) {
-              return Center(child: Text(state.error));
-            }
-            return const Center(child: Text("يرجى تحديد تاريخ لعرض التقرير"));
-          },
+                  } else if (state is ViewDailyRecordsErrorState) {
+                    return Center(child: Text(state.message));
+                  }
+                  return const Center(
+                      child: Text("يرجى تحديد تاريخ لعرض التقرير"));
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

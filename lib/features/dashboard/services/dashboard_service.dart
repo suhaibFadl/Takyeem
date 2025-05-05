@@ -4,7 +4,8 @@ class DashboardService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<int> getTotalStudents() async {
-    final response = await _supabase.from('Students').select('*');
+    final response =
+        await _supabase.from('Students').select('*').neq('isActive', false);
     return response.length;
   }
 
@@ -45,6 +46,7 @@ class DashboardService {
         .from('StudentDailyRecord')
         .select('*') // Fetch data
         .eq('type', type)
+        .neq('status', 'لم يسمع')
         .gte('date', fromDate.toIso8601String())
         .lt('date', toDate.toIso8601String());
     return response.length;

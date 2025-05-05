@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:takyeem/features/reports/blocs/report_bloc/report_bloc.dart';
 import 'package:takyeem/features/reports/blocs/students_bloc/students_bloc.dart';
 import 'package:takyeem/features/reports/blocs/students_bloc/students_event.dart';
+import 'package:takyeem/features/reports/blocs/view_daily_records_bloc/view_daily_records_bloc.dart';
 import 'package:takyeem/features/reports/pages/add_daily_records.dart';
 import 'package:takyeem/features/reports/pages/monthly_results_list.dart';
 import 'package:takyeem/features/reports/pages/view_daily_records.dart';
@@ -53,7 +54,7 @@ class ReportsMain extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BlocProvider.value(
                       value: context.read<ReportBloc>(),
-                      child: const AddDailyRecords(),
+                      child: AddDailyRecords(),
                     ),
                   ),
                 );
@@ -87,13 +88,12 @@ class ReportsMain extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             child: TextButton(
               onPressed: () {
-                reportBloc.add(LoadTodayRecordsEvent());
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider.value(
-                      value: context.read<ReportBloc>(),
-                      child: const ViewDailyRecords(),
+                      value: context.read<ViewDailyRecordsBloc>(),
+                      child: ViewDailyRecords(),
                     ),
                   ),
                 );

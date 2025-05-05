@@ -1,5 +1,6 @@
 part of 'report_bloc.dart';
 
+@immutable
 sealed class ReportEvent {}
 
 final class LoadMainDataEvent extends ReportEvent {}
@@ -30,6 +31,24 @@ class LoadRecordsByDateEvent extends ReportEvent {
 
   LoadRecordsByDateEvent({required this.date});
 
+  // @override
+  // List<Object> get props => [date];
+}
+
+class _UpdateStudentsWithoutRecordEvent extends ReportEvent {
+  final List<Student>? updatedList;
+  _UpdateStudentsWithoutRecordEvent(this.updatedList);
+
   @override
-  List<Object> get props => [date];
+  List<Object?> get props => [updatedList];
+}
+
+// --- Add Search Event ---
+final class SearchStudentsEvent extends ReportEvent {
+  final String query;
+
+  SearchStudentsEvent(this.query);
+
+  @override
+  List<Object?> get props => [query];
 }

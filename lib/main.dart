@@ -10,6 +10,7 @@ import 'package:takyeem/features/reports/Services/reports_service.dart';
 import 'package:takyeem/features/reports/blocs/report_bloc/report_bloc.dart';
 import 'package:takyeem/features/reports/blocs/student_monthly_reports/student_monthly_reports_bloc.dart';
 import 'package:takyeem/features/reports/blocs/students_bloc/students_bloc.dart';
+import 'package:takyeem/features/reports/blocs/view_daily_records_bloc/view_daily_records_bloc.dart';
 import 'package:takyeem/features/students/bloc/student_bloc.dart';
 import 'package:takyeem/features/students/service/studentService.dart';
 import 'package:takyeem/themes/app_theme.dart';
@@ -56,6 +57,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => StudentsBloc(StudentService()),
+        ),
+        BlocProvider(
+          create: (context) => ViewDailyRecordsBloc(ReportsService()),
         ),
       ],
       child: MaterialApp(
