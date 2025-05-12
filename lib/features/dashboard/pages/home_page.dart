@@ -54,7 +54,6 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
-            log("state: $state");
             if (state is DashboardInitial) {
               context.read<DashboardBloc>().add((DashboardInitialEvent()));
             }
@@ -92,6 +91,7 @@ class HomePage extends StatelessWidget {
                               .bodyMedium!
                               .copyWith(
                                 color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold,
                               ),
                         ),
 
@@ -297,103 +297,158 @@ class HomePage extends StatelessWidget {
                         //   ),
 
                         // ),
+                        // const Gap(24),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Container(
+                        //       width: MediaQuery.of(context).size.width * 0.45,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 8, vertical: 12),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(12),
+                        //         color: Theme.of(context).colorScheme.surface,
+                        //         boxShadow: [
+                        //           BoxShadow(
+                        //             color: Colors.black
+                        //                 .withOpacity(0.15), // Shadow color
+                        //             offset: const Offset(
+                        //                 0, 1), // Shadow offset (x, y)
+                        //             blurRadius: 8, // Shadow blur radius
+                        //             spreadRadius: 2, // Shadow spread radius
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       child: Column(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         crossAxisAlignment: CrossAxisAlignment.center,
+                        //         children: [
+                        //           Text(
+                        //             '${state.thomon}',
+                        //             style: Theme.of(context)
+                        //                 .textTheme
+                        //                 .bodyLarge!
+                        //                 .copyWith(
+                        //                   color: Colors.black,
+                        //                   fontSize: 25,
+                        //                 ),
+                        //           ),
+                        //           Gap(12),
+                        //           Text(
+                        //             'ثمن',
+                        //             style: Theme.of(context)
+                        //                 .textTheme
+                        //                 .bodySmall!
+                        //                 .copyWith(
+                        //                   color: Colors.black,
+                        //                 ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     // Gap(52),
+                        //     Container(
+                        //       width: MediaQuery.of(context).size.width * 0.45,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 8, vertical: 12),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(12),
+                        //         color: Theme.of(context).colorScheme.surface,
+                        //         boxShadow: [
+                        //           BoxShadow(
+                        //             color: Colors.black
+                        //                 .withOpacity(0.15), // Shadow color
+                        //             offset: const Offset(
+                        //                 0, 1), // Shadow offset (x, y)
+                        //             blurRadius: 8, // Shadow blur radius
+                        //             spreadRadius: 2, // Shadow spread radius
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       child: Column(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         crossAxisAlignment: CrossAxisAlignment.center,
+                        //         children: [
+                        //           Text(
+                        //             '${state.helga}',
+                        //             style: Theme.of(context)
+                        //                 .textTheme
+                        //                 .bodyLarge!
+                        //                 .copyWith(
+                        //                   color: Colors.black,
+                        //                   fontSize: 25,
+                        //                 ),
+                        //           ),
+                        //           Gap(12),
+                        //           Text(
+                        //             'حلقة',
+                        //             style: Theme.of(context)
+                        //                 .textTheme
+                        //                 .bodySmall!
+                        //                 .copyWith(
+                        //                   color: Colors.black,
+                        //                 ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         const Gap(24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Theme.of(context).colorScheme.surface,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black
-                                        .withOpacity(0.15), // Shadow color
-                                    offset: const Offset(
-                                        0, 1), // Shadow offset (x, y)
-                                    blurRadius: 8, // Shadow blur radius
-                                    spreadRadius: 2, // Shadow spread radius
-                                  ),
-                                ],
+                        for (var type in state.totalByTypeList!.keys)
+                          Column(
+                            children: [
+                              const Gap(12),
+                              Container(
+                                height: 60,
+                                //  width: MediaQuery.of(context).size.width * 0.45,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Theme.of(context).colorScheme.surface,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black
+                                          .withOpacity(0.15), // Shadow color
+                                      offset: const Offset(
+                                          0, 1), // Shadow offset (x, y)
+                                      blurRadius: 8, // Shadow blur radius
+                                      spreadRadius: 2, // Shadow spread radius
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  // crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${state.totalByTypeList![type]!.passed} \\ ${state.totalByTypeList![type]!.total}',
+                                      textDirection: TextDirection.rtl,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.black,
+                                          ),
+                                    ),
+                                    Gap(12),
+                                    Text(
+                                      type,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.black,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '${state.thomon}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                          color: Colors.black,
-                                          fontSize: 25,
-                                        ),
-                                  ),
-                                  Gap(12),
-                                  Text(
-                                    'ثمن',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(
-                                          color: Colors.black,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Gap(52),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Theme.of(context).colorScheme.surface,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black
-                                        .withOpacity(0.15), // Shadow color
-                                    offset: const Offset(
-                                        0, 1), // Shadow offset (x, y)
-                                    blurRadius: 8, // Shadow blur radius
-                                    spreadRadius: 2, // Shadow spread radius
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '${state.helga}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                          color: Colors.black,
-                                          fontSize: 25,
-                                        ),
-                                  ),
-                                  Gap(12),
-                                  Text(
-                                    'حلقة',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(
-                                          color: Colors.black,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+
                         const Gap(24),
                         Container(
                           child: TextButton(
@@ -434,9 +489,7 @@ class HomePage extends StatelessWidget {
                 ),
               );
             }
-            // if (state is CreateNewMonthState) {
-            //   return CreateNewMonthPage();
-            // }
+
             if (state is CreateNewMonthState) {
               // Use addPostFrameCallback to show dialog after build
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -447,6 +500,11 @@ class HomePage extends StatelessWidget {
                 );
               });
               return const SizedBox.shrink();
+            }
+            if (state is DashboardErrorState) {
+              return Center(
+                child: Text(state.error),
+              );
             }
             return const SizedBox.shrink();
           },

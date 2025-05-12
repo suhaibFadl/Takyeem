@@ -194,18 +194,11 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
 
   Future<void> _addDailyRecord(
       AddDailyRecordEvent event, Emitter<ReportState> emit) async {
-    // --- Option 1: Remove Optimistic UI update in BLoC ---
-    // // Remove the optimistic update code below if relying purely on the stream
-    // emit(ReportLoadingState()); // Or a specific 'AddingRecordState'
-    // try {
-    //    await reportsService.addDailyRecord(event.dailyRecord);
-    //    // Update surah logic can remain if needed before stream update
-    //    // ... surah update ...
-    //    // The stream will trigger _onUpdateStudentsWithoutRecord eventually
-    // } catch (e) {
-    //    // ... error handling ...
-    // }
-
+    try {
+      await reportsService.addDailyRecord(event.dailyRecord);
+    } catch (e) {
+      emit(ReportErrorState(e.toString()));
+    }
     // --- Option 2: Keep Optimistic Update (but update both lists) ---
     if (state is ReportLoadedState) {
       final currentState = state as ReportLoadedState;
@@ -218,10 +211,10 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
           List.from(currentState.filteredStudents);
 
       // Remove from both lists
-      updatedAllStudents
-          .removeWhere((student) => student.id == studentIdToRemove);
-      updatedFilteredStudents
-          .removeWhere((student) => student.id == studentIdToRemove);
+      // updatedAllStudents
+      //     .removeWhere((student) => student.id == studentIdToRemove);
+      // updatedFilteredStudents
+      //     .removeWhere((student) => student.id == studentIdToRemove);
 
       // Emit optimistically updated state
       emit(currentState.copyWith(
@@ -231,8 +224,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
 
       try {
         // Perform the actual DB operation
-        await reportsService.addDailyRecord(event.dailyRecord);
-
+        // await reportsService.addDailyRecord(event.dailyRecord);
+        ;
         // Surah Update Logic (use original list for finding student if needed)
         var student = currentState.allStudentsWithoutRecords?.firstWhere(
             (s) => s.id == event.dailyRecord.studentId,
@@ -243,6 +236,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
           await studentService.updateStudentSurah(
               student!.id, event.dailyRecord.surahId!);
         }
+
         // Stream update will follow to confirm the state.
       } catch (e, stackTrace) {
         debugPrint("Error adding daily record: ${e.toString()}");
@@ -256,6 +250,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       // Handle case where state is not loaded (e.g., emit loading/error)
       emit(ReportLoadingState()); // Or handle appropriately
       try {
+        debugPrint(
+            "event.dailyRecord: ${event.dailyRecord.type}, ${event.dailyRecord.typeId}");
         await reportsService.addDailyRecord(event.dailyRecord);
         // Maybe trigger a reload after adding if state wasn't loaded
         add(LoadMainDataEvent());

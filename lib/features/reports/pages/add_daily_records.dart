@@ -19,7 +19,7 @@ class AddDailyRecords extends StatelessWidget {
       List<dynamic> items, BuildContext context) {
     List<DropdownMenuItem<String>> dropdownItems = items.map((status) {
       return DropdownMenuItem<String>(
-        value: status.id.toString(), // Assuming `id` is a unique identifier
+        value: status.id.toString(),
         child: Text(
           status.name, // Replace `name` with the property to display
           style: Theme.of(context).textTheme.bodySmall,
@@ -283,7 +283,7 @@ class AddDailyRecords extends StatelessWidget {
                                         onPressed: () {
                                           if (reportEntity.sheikh == null ||
                                               reportEntity.status == null ||
-                                              reportEntity.type == null) {
+                                              reportEntity.typeId == null) {
                                             showTimedMessage(context,
                                                 "أكمل البيانات الخاصة بالتسميع لـ \n\"${student.firstName} ${student.lastName}\"");
                                             return;
@@ -303,8 +303,11 @@ class AddDailyRecords extends StatelessWidget {
                                                 reportEntity.surahId ??
                                                     student.surah?.id;
                                           }
+
                                           reportEntity.studentId = student.id;
                                           reportEntity.date = DateTime.now();
+                                          debugPrint(
+                                              "reportEntity: ${reportEntity}");
                                           context.read<ReportBloc>().add(
                                               AddDailyRecordEvent(reportEntity
                                                   .toDailyRecord()));
@@ -638,11 +641,18 @@ class AddDailyRecords extends StatelessWidget {
                                         }).toList(),
                                         onChanged: (value) {
                                           if (value == null) return;
-                                          reportEntity.type = state
-                                                  .dailyRecordType[
-                                                      int.parse(value) - 1]
-                                                  .name ??
-                                              "";
+                                          debugPrint("value: $value");
+                                          var type = state.dailyRecordType
+                                              .firstWhere((element) =>
+                                                  element.id ==
+                                                  double.parse(value));
+                                          reportEntity.typeId = type.id;
+                                          reportEntity.type = type.name;
+
+                                          debugPrint(
+                                              "reportEntity.type: ${reportEntity.type}");
+                                          debugPrint(
+                                              "reportEntity.typeId: ${reportEntity.typeId}");
                                         },
                                       ),
                                     ),

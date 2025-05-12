@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:takyeem/features/auth/pages/login.dart';
+import 'package:takyeem/features/navbar/google_navbar.dart';
 import 'package:takyeem/features/navbar/navbar.dart';
 
 class AuthGate extends StatelessWidget {
@@ -20,7 +21,7 @@ class AuthGate extends StatelessWidget {
           final session = snapshot.hasData ? snapshot.data!.session : null;
           if (session != null) {
             // return ProfilePage();
-            return const NavBar();
+            return GoogleNavBar();
           } else {
             return const LoginPage();
           }

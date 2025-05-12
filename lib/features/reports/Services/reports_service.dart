@@ -30,8 +30,7 @@ class ReportsService {
 
   Stream<List<Student>?> loadStudentsWithoutDailyRecord() async* {
     List<Student> allActiveStudents = [];
-    Set<String> recordedStudentIdsToday =
-        {}; // Store IDs of students recorded today
+    Set<String> recordedStudentIdsToday = {};
 
     final studentResponse = await _supabaseClient
         .from('Students')
@@ -42,121 +41,54 @@ class ReportsService {
     allActiveStudents =
         studentResponse.map((student) => Student.fromJson(student)).toList();
 
-    DateTime toDate = DateTime.now();
-    DateTime fromDate = DateTime(toDate.year, toDate.month, toDate.day, 0, 0);
-
-    final recordStream = _supabaseClient.from('StudentDailyRecord').stream(
-            primaryKey: [
-          'id'
-        ]) // Use actual primary key(s) for StudentDailyRecord
-        .order('date', ascending: false); // Optional ordering
+    final recordStream = _supabaseClient
+        .from('StudentDailyRecord')
+        .stream(primaryKey: ['id']).order('date', ascending: false);
 
     try {
       await for (final streamedData in recordStream) {
-        // --- Start Debug ---
-        debugPrint(
-            "[Stream Debug] Received stream update with ${streamedData.length} records.");
-        // --- End Debug ---
-
-        // Determine date range for "today" within the loop
         final now = DateTime.now();
         final startOfToday = DateTime(now.year, now.month, now.day, 0, 0, 0);
         final startOfTomorrow =
             DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
-        // --- Start Debug ---
-        debugPrint(
-            "[Stream Debug] Date Range: $startOfToday to $startOfTomorrow");
-        // --- End Debug ---
 
-        // Re-calculate the set of recorded student IDs for today (as Strings)
         recordedStudentIdsToday = streamedData
             .where((recordMap) {
-              bool isToday = false; // Flag to track if record is for today
+              bool isToday = false;
               if (!recordMap.containsKey('date') ||
                   !recordMap.containsKey('student_id')) {
-                // --- Start Debug ---
-                debugPrint(
-                    "[Stream Debug] Record skipped (missing keys): $recordMap");
-                // --- End Debug ---
                 return false;
               }
               try {
                 final recordDate = DateTime.parse(recordMap['date'] as String);
                 isToday = !recordDate.isBefore(startOfToday) &&
                     recordDate.isBefore(startOfTomorrow);
-                // --- Add Specific Debug for the problematic Student ID (replace '100' if needed) ---
-                if (recordMap['student_id']?.toString() == '100') {
-                  // Replace '100' with the actual ID
-                  debugPrint(
-                      "[Stream Debug] Checking record for Student 100: Date=$recordDate, IsToday=$isToday");
-                }
-                // --- End Debug ---
               } catch (e) {
-                // --- Start Debug ---
-                debugPrint(
-                    "[Stream Debug] Error parsing date for record: $recordMap, Error: $e");
-                // --- End Debug ---
-                return false; // Skip records with parse errors
+                return false;
               }
-              return isToday; // Return the flag
+              return isToday;
             })
             .map((recordMap) {
               final id = recordMap['student_id'];
-              // Cast to int?, then convert to String if not null
+
               final stringId = (id is int) ? id.toString() : null;
-              // --- Add Specific Debug for the problematic Student ID (replace '100' if needed) ---
-              if (id?.toString() == '100') {
-                // Replace '100' with the actual ID
-                debugPrint(
-                    "[Stream Debug] Converting ID for Student 100: Original=$id, String=$stringId");
-              }
-              // --- End Debug ---
+
               return stringId;
             })
-            .where((id) => id != null) // Filter out nulls
-            .cast<String>() // Now contains Strings
+            .where((id) => id != null)
+            .cast<String>()
             .toSet();
 
-        // --- Start Debug ---
-        debugPrint(
-            "[Stream Debug] Calculated Today's Recorded IDs: $recordedStudentIdsToday");
-        // Add Specific Check if the problematic ID is in the Set
-        if (recordedStudentIdsToday.contains('100')) {
-          // Replace '100' with the actual ID
-          debugPrint("[Stream Debug] Set CONFIRMED to contain '100'");
-        } else {
-          debugPrint("[Stream Debug] Set DOES NOT contain '100'");
-        }
-        // --- End Debug ---
-
-        // Filter the *cached* list of all active students
-        final studentsWithoutRecord = allActiveStudents
-            // Compare student.id (String) with the set of Strings
-            .where((student) {
+        final studentsWithoutRecord = allActiveStudents.where((student) {
           final hasRecord =
               recordedStudentIdsToday.contains(student.id.toString());
-          // --- Add Specific Debug for the problematic Student ID (replace '100' if needed) ---
-          if (student.id == '100') {
-            // Replace '100' with the actual ID
-            debugPrint(
-                "[Stream Debug] Filtering Student 100: ID=${student.id}, HasRecord=$hasRecord, ShouldAppear=${!hasRecord}");
-          }
-          // --- End Debug ---
-          return !hasRecord; // Return true if student should appear (no record)
+
+          return !hasRecord;
         }).toList();
 
-        // --- Start Debug ---
-        debugPrint(
-            "[Stream Debug] Yielding Students Without Records: ${studentsWithoutRecord.map((s) => s.id).toList()}");
-        // --- End Debug ---
-
-        // Yield the latest calculated list
         yield studentsWithoutRecord.isEmpty ? null : studentsWithoutRecord;
       }
     } catch (e) {
-      debugPrint(
-          'Error in streamStudentsWithoutDailyRecord stream processing: $e');
-      // Yield an error state to the listener (Bloc)
       yield* Stream.error(Exception('Stream processing failed: $e'));
     }
   }
@@ -189,7 +121,7 @@ class ReportsService {
     DateTime fromDate = DateTime(toDate.year, toDate.month, toDate.day, 0, 0);
     final response = await _supabaseClient
         .from('StudentDailyRecord')
-        .select('*, Students(*, Surah(*))')
+        .select('*, Students(*, Surah(*)), DailyRecordType(name)')
         .gte('date', fromDate.toIso8601String())
         .lt('date', toDate.toIso8601String())
         .order('surah_id', ascending: true);
@@ -222,12 +154,12 @@ class ReportsService {
 
   Future<bool> isTodayStudyDay() async {
     String dayName = DateFormat('EEEE').format(DateTime.now());
-    debugPrint("******************${dayName}");
+
     final response = await _supabaseClient
         .from('Study Days')
         .select('*')
         .eq('english_name', dayName);
-    debugPrint("******************${response}");
+
     return response.isNotEmpty;
   }
 
@@ -238,36 +170,24 @@ class ReportsService {
 
     final response = await _supabaseClient
         .from('StudentDailyRecord')
-        .select('*, Students(*, Surah(*))')
-        // Use the provided date range
+        .select('*, Students(*, Surah(*)), DailyRecordType(name)')
         .gte('date', fromDate.toIso8601String())
         .lt('date', toDate.toIso8601String());
     // .order('student_id', ascending: true); // Keep or remove order as needed
 
-    // Check if the response is not empty and is a list
-    if (response != null && response is List) {
-      final records = response
-          .map((record) => StudentDailyRecord.fromJson(record))
-          .toList();
+    final records =
+        response.map((record) => StudentDailyRecord.fromJson(record)).toList();
 
-      // Optional: Sort in Dart if DB sorting is complex/not working
-      // records.sort((a, b) => (a.student?.surahId ?? 0).compareTo(b.student?.surahId ?? 0));
-
-      return records;
-    } else {
-      // Handle cases where response is null or not a list
-      return []; // Return an empty list or throw an error
-    }
+    return records;
   }
 
   Future<bool> isStudyDay(DateTime date) async {
-    String dayName = DateFormat('EEEE', 'en_US')
-        .format(date); // Ensure consistent locale if needed
+    String dayName = DateFormat('EEEE', 'en_US').format(date);
     final response = await _supabaseClient
-        .from('Study Days') // Make sure table name is correct
+        .from('Study Days')
         .select('*')
         .eq('english_name', dayName)
-        .limit(1); // Optimization: only need to know if one exists
+        .limit(1);
     return response.isNotEmpty;
   }
 }

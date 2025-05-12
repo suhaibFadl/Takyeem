@@ -8,6 +8,7 @@ class StudentDailyReportEntity {
   String? status;
   String? type;
   int? surahId;
+  int? typeId;
   late DateTime date;
 
   StudentDailyRecord toDailyRecord() {
@@ -21,6 +22,7 @@ class StudentDailyReportEntity {
       type: type!,
       date: date,
       surahId: surahId,
+      typeId: typeId!,
     );
   }
 }

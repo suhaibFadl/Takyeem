@@ -14,7 +14,7 @@ final class DashboardLoadedState extends DashboardState {
   int thomon;
   int horuf;
   int absentees;
-
+  Map<String, ViewTypeEntity>? totalByTypeList;
   DashboardLoadedState({
     required this.today,
     required this.totalStudents,
@@ -23,6 +23,7 @@ final class DashboardLoadedState extends DashboardState {
     required this.helga,
     required this.thomon,
     required this.horuf,
+    required this.totalByTypeList,
   });
 }
 

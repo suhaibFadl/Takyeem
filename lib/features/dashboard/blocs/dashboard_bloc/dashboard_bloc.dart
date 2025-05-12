@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:takyeem/features/dashboard/entities/view_type.dart';
 import 'package:takyeem/features/dashboard/services/dashboard_service.dart';
 import 'package:takyeem/features/date/date_gate.dart';
 import 'package:takyeem/features/date/date_service.dart';
@@ -21,6 +23,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   late int thomon;
   late int horuf;
   late Today? _today;
+  late Map<String, ViewTypeEntity>? totalByTypeList;
 
   DashboardBloc(this._dashboardService) : super(DashboardInitial()) {
     on<DashboardInitialEvent>((event, emit) async {
@@ -29,14 +32,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         _today = await DateGate().getHijriDate(DateTime.now());
         log("_today: $_today");
         if (_today == null) emit(CreateNewMonthState());
-
+        // await _dashboardService.populateTypeIdsFromTypeNames();
         totalStudents = await _dashboardService.getTotalStudents();
         attendances = await _dashboardService.getAttendances();
         absentees = await _dashboardService.getAbsentees();
         helga = await _dashboardService.getTotalByType('حلقة');
         thomon = await _dashboardService.getTotalByType('ثمن');
         horuf = await _dashboardService.getTotalByType('حروف');
+        totalByTypeList = await _dashboardService.getTotalByTypeList();
 
+        debugPrint("totalByTypeList: $totalByTypeList");
         emit(
           DashboardLoadedState(
             today: _today!,
@@ -46,6 +51,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             helga: helga,
             thomon: thomon,
             horuf: horuf,
+            totalByTypeList: totalByTypeList,
           ),
         );
       } catch (e) {
